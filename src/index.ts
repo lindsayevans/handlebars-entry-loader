@@ -9,7 +9,7 @@ import * as Handlebars from 'handlebars';
 /**
  * Options for the loader
  */
-export class HandlebarsStaticLoaderOptions {
+export class HandlebarsEntryLoaderOptions {
     /** Output debugging information to rendered HTML */
     debug = false;
     /** Data to pass to the template */
@@ -29,7 +29,7 @@ export class HandlebarsStaticLoaderOptions {
  * 
  * Includes support for data, partials & helpers
  */
-export default function HandlebarsStaticLoader(this: webpack.loader.LoaderContext, source: string): string {
+export default function HandlebarsEntryLoader(this: webpack.loader.LoaderContext, source: string): string {
 
     // Merge options with defaults
     const options = ObjectAssign(defaultOptions, LoaderUtils.getOptions(this));
@@ -61,7 +61,7 @@ export default function HandlebarsStaticLoader(this: webpack.loader.LoaderContex
 }
 
 /** Default options */
-const defaultOptions = new HandlebarsStaticLoaderOptions();
+const defaultOptions = new HandlebarsEntryLoaderOptions();
 
 /**
  * Loads data
@@ -90,7 +90,7 @@ function getData(loaderContext: webpack.loader.LoaderContext, data: string | any
 /**
  * Loads partials
  */
-function loadPartials(loaderContext: webpack.loader.LoaderContext, options: HandlebarsStaticLoaderOptions) {
+function loadPartials(loaderContext: webpack.loader.LoaderContext, options: HandlebarsEntryLoaderOptions) {
     // TODO: Deal with arrays of globs
     glob.sync(options.partials).forEach(partial => {
 
@@ -113,7 +113,7 @@ function loadPartials(loaderContext: webpack.loader.LoaderContext, options: Hand
 /**
  * Loads helpers
  */
-function loadHelpers(loaderContext: webpack.loader.LoaderContext, options: HandlebarsStaticLoaderOptions) {
+function loadHelpers(loaderContext: webpack.loader.LoaderContext, options: HandlebarsEntryLoaderOptions) {
     // TODO: Deal with arrays of globs
     glob.sync(options.helpers).forEach(helper => {
 
@@ -135,7 +135,7 @@ function loadHelpers(loaderContext: webpack.loader.LoaderContext, options: Handl
 /**
  * Wraps Handlebars template source with debugging information if enabled 
  */
-function decorateTemplate(source: string, resource: string, data: any, options: HandlebarsStaticLoaderOptions): string {
+function decorateTemplate(source: string, resource: string, data: any, options: HandlebarsEntryLoaderOptions): string {
     const prefix = options.debug ? `<!-- handlebars-entry-loader:template
            src="${resource}"
            data=\'\n${JSON.stringify(data, null, 2)}\n\' -->\n` : '';
@@ -147,7 +147,7 @@ function decorateTemplate(source: string, resource: string, data: any, options: 
 /**
  * Wraps Handlebars partial source with debugging information if enabled 
  */
-function decoratePartial(source: string, partialName: string, partialSrc: string, options: HandlebarsStaticLoaderOptions): string {
+function decoratePartial(source: string, partialName: string, partialSrc: string, options: HandlebarsEntryLoaderOptions): string {
     const prefix = options.debug ? `<!-- handlebars-entry-loader:partial name="${partialName}" src="${partialSrc}" -->\n` : '';
     const suffix = options.debug ? `<!-- /handlebars-entry-loader:partial name="${partialName}" -->\n` : '';
 
