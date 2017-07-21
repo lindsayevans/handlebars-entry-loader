@@ -22,6 +22,9 @@ const ExtractHandlebars = new ExtractTextPlugin({
 });
 
 module.exports = {
+    entry: {
+        'index': 'src/templates/homepage.hbs'
+    },
     module: {
         loaders: [
             {
@@ -36,9 +39,9 @@ module.exports = {
                     {
                         loader: 'handlebars-entry-loader',
                         options: {
-                            partials: './src/components/**/*.hbs',
-                            helpers: './src/helpers/**/*.helper.js',
-                            data: './src/prototype/data.json'
+                            partials: 'src/partials/**/*.hbs',
+                            helpers: 'src/helpers/**/*.helper.js',
+                            data: 'src/data.json'
                         }
                     },
                 ])
@@ -48,19 +51,13 @@ module.exports = {
     plugins: [
         ExtractHandlebars
     ],
-    entry: {
-        'index': 'src/pages/homepage.hbs',
-        'pages/about': 'src/pages/about.hbs',
-        'pages/admin/login': 'src/pages/admin/login.hbs',
-        'prototype/index': 'src/prototype/index.hbs',
-    }
     output: {
-        path: path.join(__dirname, '../dist')
+        path: 'dist/'
     }
 }
 ```
 
-See [examples](./examples/) for more complex configurations.
+See [`src/examples`](./src/examples/) for more complex configurations.
 
 ## Options
 
@@ -101,8 +98,8 @@ By default partials will be use their full filename as the partial name, this ma
 
 To override this behaviour, provide a `partialNamer` function:
 ```javascript
-partialNamer: partial => {
-    return partial.replace('./src/partials/', '').replace('.hbs', '');
+partialNamer: function(partial) {
+    return partial.replace('src/partials/', '').replace('.hbs', '');
 }
 ```
 
@@ -128,7 +125,7 @@ helpers: 'src/helpers/**/*.helper.js'
 
 `src/helpers/json.helper.js:`
 ```javascript
-export default data => {
+exports.default = function(data) {
     return JSON.stringify(data, null, ' ');
 };
 ```
@@ -149,8 +146,8 @@ By default helpers will be use their full filename as the helper name, this may 
 
 To override this behaviour, provide a `helperNamer` function:
 ```javascript
-helperNamer: helper => {
-    return helper.replace('./src/helpers/', '').replace('.helper.js', '');
+helperNamer: function(helper) {
+    return helper.replace('src/helpers/', '').replace('.js', '');
 }
 ```
 

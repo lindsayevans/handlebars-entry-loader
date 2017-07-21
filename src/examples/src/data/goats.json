@@ -1,0 +1,13 @@
+{
+    "@source": "https://github.com/NikV/goats.json",
+    "goat_memes": {
+        "i_goat_this": "http://gunnston.com/wp-content/uploads/2014/02/i-goat-this.jpg",
+        "whatever_floats_your_goat": "http://i0.kym-cdn.com/photos/images/original/000/663/857/bd7.png",
+        "row_your_goat": "http://wac.450f.edgecastcdn.net/80450F/92moose.fm/files/2014/04/GoatMeme5.jpg",
+        "here_we_goat_again":"https://i2.wp.com/picsmine.com/wp-content/uploads/2017/03/Here-we-goat-again-Goat-Memes.jpg?fit=800%2C574"
+    },
+
+    "goat_gifs": {
+        "goat_parkour":"http://i.imgur.com/4ETbG1R.gif"
+    }
+}
