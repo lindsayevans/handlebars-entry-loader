@@ -31,7 +31,6 @@
     "@types/jest": "^20.0.4",
     "@types/loader-utils": "^1.1.0",
     "@types/node": "^8.0.13",
-    "@types/object-assign": "^4.0.30",
     "@types/webpack": "^3.0.4",
     "handlebars": "^4.0.10",
     "jest": "^20.0.4",
@@ -40,8 +39,5 @@
     "ts-node": "^3.2.0",
     "typescript": "^2.4.2",
     "webpack": "^3.3.0"
-  },
-  "dependencies": {
-    "object-assign": "^4.1.1"
   }
 }
