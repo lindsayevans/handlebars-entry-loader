@@ -1,4 +1,5 @@
 # Handlebars Entry Loader
+[![NPM version](https://img.shields.io/npm/v/handlebars-entry-loader.svg?maxAge=3600)](https://travis-ci.org/lindsayevans/handlebars-entry-loader) [![Build status](https://img.shields.io/travis/lindsayevans/handlebars-entry-loader.svg?maxAge=3600)](https://www.npmjs.com/package/handlebars-entry-loader) [![Dependency status](https://img.shields.io/david/lindsayevans/handlebars-entry-loader.svg?maxAge=3600)](https://david-dm.org/lindsayevans/handlebars-entry-loader) [![bitHound dependencies](https://img.shields.io/bithound/dependencies/github/lindsayevans/handlebars-entry-loader.svg?maxAge=3600)](https://www.bithound.io/github/lindsayevans/handlebars-entry-loader/master/dependencies/npm)
 
 Webpack loader to enable using Handlebars templates as entry points.
 
