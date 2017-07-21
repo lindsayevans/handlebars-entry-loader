@@ -73,30 +73,29 @@ Data to pass to the handlebars template.
 Can either be a JavaScript Object `{foo: 'bar'}` or a path to a JSON file to load.
 
 ### Partials
-```javascript
-partials: null
-```
 
 File glob to load Handlebars Partials from.
+
+Defaults to `null` (won't load any partials)
+
+Example:
+
+`config:`
 ```javascript
 partials: 'src/partials/**/*.hbs'
 ```
 
-`src/partials/foo/bar.hbs`
+`src/partials/foo/bar.hbs:`
 ```handlebars
 <p>Hello {{name}}, I am foo/bar</p>
 ```
 
-`something.hbs`
+`something.hbs:`
 ```handlebars
 {{> src/partials/foo/bar.hbs name="Something" }}
 ```
 
 ### Partial namer
-
-```javascript
-partialNamer: partial => partial
-```
 
 By default partials will be use their full filename as the partial name, this may be undesirable (.hbs extension, ./src/ directory, etc.)
 
@@ -114,15 +113,54 @@ partialNamer: partial => {
 
 
 ### Helpers
-TODO
+
+
+File glob to load Handlebars Partials from.
+
+Defaults to `null` (won't load any partials)
+
+Example:
+
+`config:`
+```javascript
+helpers: 'src/helpers/**/*.helper.js'
+```
+
+`src/helpers/json.helper.js:`
+```javascript
+export default data => {
+    return JSON.stringify(data, null, ' ');
+};
+```
+
+`something.hbs:`
+```handlebars
+<pre>{{src/helpers/json.helper.js someJSObject}}</pre>
+```
+
 
 ### Helper namer
-TODO
+
+```javascript
+helperNamer: helper => helper
+```
+
+By default helpers will be use their full filename as the helper name, this may be undesirable (.js extension, ./src/ directory, etc.)
+
+To override this behaviour, provide a `helperNamer` function:
+```javascript
+helperNamer: helper => {
+    return helper.replace('./src/helpers/', '').replace('.helper.js', '');
+}
+```
+
+`something.hbs`
+```handlebars
+<pre>{{json someJSObject}}</pre>
+```
+
 
 ### Debug
-```javascript
-debug: false
-```
 
 Set to `true` to wrap Handlebars templates & partials with HTML comments containing debugging information (name, path, data, etc.)
 
