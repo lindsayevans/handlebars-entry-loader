@@ -1,0 +1,47 @@
+{
+  "name": "handlebars-entry-loader",
+  "version": "0.3.1",
+  "description": "Webpack loader to enable using Handlebars templates as entry points",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest --no-cache --config jest.config.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lindsayevans/handlebars-entry-loader.git"
+  },
+  "keywords": [
+    "handlebars",
+    "webpack",
+    "loader"
+  ],
+  "author": "Lindsay Evans <linz@linz.id.au>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lindsayevans/handlebars-entry-loader/issues"
+  },
+  "homepage": "https://github.com/lindsayevans/handlebars-entry-loader#readme",
+  "devDependencies": {
+    "@types/glob": "^5.0.30",
+    "@types/handlebars": "^4.0.34",
+    "@types/jest": "^20.0.4",
+    "@types/loader-utils": "^1.1.0",
+    "@types/node": "^8.0.13",
+    "@types/object-assign": "^4.0.30",
+    "@types/webpack": "^3.0.4",
+    "handlebars": "^4.0.10",
+    "jest": "^20.0.4",
+    "loader-utils": "^1.1.0",
+    "ts-jest": "^20.0.7",
+    "ts-node": "^3.2.0",
+    "typescript": "^2.4.2",
+    "webpack": "^3.3.0"
+  },
+  "dependencies": {
+    "object-assign": "^4.1.1"
+  }
+}
