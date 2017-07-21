@@ -3,6 +3,7 @@ cache: yarn
 deploy:
   on:
     all_branches: true
+  skip_cleanup: true
   provider: npm
   email: $NPM_EMAIL
   api_key: $NPM_API_KEY
