@@ -1,6 +1,6 @@
 {
   "name": "handlebars-entry-loader",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Webpack loader to enable using Handlebars templates as entry points",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
