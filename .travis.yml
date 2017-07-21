@@ -10,7 +10,7 @@ deploy:
   - provider: npm
     on:
       branch: develop
-      tags: next
+    tag: next
     skip_cleanup: true
     email: $NPM_EMAIL
     api_key: $NPM_API_KEY
