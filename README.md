@@ -165,3 +165,12 @@ Useful to enable based on NODE_ENV:
 ```javascript
 debug: process.env.NODE_ENV !== 'production'
 ```
+
+### Prevent JS output
+
+By default we prevent Webpack from emitting a `.js` file with each Handlebars entry point.
+
+If this is causing issues with other loaders, you can turn it off:
+```javascript
+preventJsOutput: false
+```

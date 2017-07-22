@@ -21,6 +21,8 @@ export class HandlebarsEntryLoaderOptions {
     helpers: string | Array<string>;
     /** A function that returns a name for the helper */
     helperNamer = defaultHelperNamer
+    /** Prevent Webpack from outputting .js files */
+    preventJsOutput = true;
 };
 
 /**
@@ -44,6 +46,11 @@ export default function HandlebarsEntryLoader(this: webpack.loader.LoaderContext
     // Load helpers
     if (options.helpers) {
         loadHelpers(this, options);
+    }
+
+    // Prevent JS output
+    if (options.preventJsOutput) {
+        this._compiler.plugin('emit', preventJsOutputPlugin(this.resource, this.context));
     }
 
     // TODO: Handlebars Decorators
@@ -188,4 +195,25 @@ export function defaultPartialNamer(partial: string): string {
  */
 export function defaultHelperNamer(helper: string): string {
     return path.basename(helper, path.extname(helper));
+}
+
+function preventJsOutputPlugin(resource: string, context: string) {
+
+    let entryName: string;
+    return (compilation: any, callback: Function) => {
+
+        for (let i in compilation.options.entry) {
+            if (path.resolve(compilation.options.entry[i]) === resource) {
+                entryName = i;
+                break;
+            }
+        }
+
+        if (entryName !== undefined) {
+            delete compilation.assets[entryName + '.js'];
+        }
+
+        callback();
+
+    }
 }
