@@ -59,8 +59,6 @@ export default function HandlebarsEntryLoader(this: webpack.loader.LoaderContext
     // Decorate template with debugging info
     source = decorateTemplate(source, this.resource, data, options);
 
-    // TODO: Figure out why ExtractTextPlugin isn't removing .js & .map files
-
     // Compile the template with data & return
     return Handlebars.compile(source)(data);
 
