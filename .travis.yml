@@ -1,9 +1,5 @@
 language: node_js
 cache: yarn
-branches:
-  only:
-  - master
-  - develop
 deploy:
   - provider: npm
     on: develop
