@@ -1,6 +1,6 @@
 {
   "name": "handlebars-entry-loader",
-  "version": "0.3.1",
+  "version": "1.0.0",
   "description": "Webpack loader to enable using Handlebars templates as entry points",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -31,7 +31,6 @@
     "@types/jest": "^20.0.4",
     "@types/loader-utils": "^1.1.0",
     "@types/node": "^8.0.13",
-    "@types/object-assign": "^4.0.30",
     "@types/webpack": "^3.0.4",
     "handlebars": "^4.0.10",
     "jest": "^20.0.4",
@@ -41,7 +40,8 @@
     "typescript": "^2.4.2",
     "webpack": "^3.3.0"
   },
-  "dependencies": {
-    "object-assign": "^4.1.1"
+  "peerDependencies": {
+    "handlebars": "^4",
+    "webpack": "^3"
   }
 }

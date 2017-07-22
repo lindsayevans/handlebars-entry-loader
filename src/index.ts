@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
-import * as ObjectAssign from 'object-assign';
 import * as webpack from 'webpack';
 import * as LoaderUtils from 'loader-utils';
 import * as Handlebars from 'handlebars';
@@ -15,13 +14,15 @@ export class HandlebarsEntryLoaderOptions {
     /** Data to pass to the template */
     data: any | string = {};
     /** A file glob of partials to load */
-    partials: string;
+    partials: string | Array<string>;
     /** A function that returns a name for the partial */
     partialNamer = defaultPartialNamer;
     /** A file glob of helpers to load */
-    helpers: string;
+    helpers: string | Array<string>;
     /** A function that returns a name for the helper */
     helperNamer = defaultHelperNamer
+    /** Prevent Webpack from outputting .js files */
+    preventJsOutput = true;
 };
 
 /**
@@ -32,7 +33,7 @@ export class HandlebarsEntryLoaderOptions {
 export default function HandlebarsEntryLoader(this: webpack.loader.LoaderContext, source: string): string {
 
     // Merge options with defaults
-    const options = ObjectAssign(defaultOptions, LoaderUtils.getOptions(this));
+    const options = { ...defaultOptions, ...LoaderUtils.getOptions(this) };
 
     // Get data
     const data = getData(this, options.data);
@@ -45,6 +46,11 @@ export default function HandlebarsEntryLoader(this: webpack.loader.LoaderContext
     // Load helpers
     if (options.helpers) {
         loadHelpers(this, options);
+    }
+
+    // Prevent JS output
+    if (options.preventJsOutput) {
+        this._compiler.plugin('emit', preventJsOutputPlugin(this.resource, this.context));
     }
 
     // TODO: Handlebars Decorators
@@ -91,21 +97,31 @@ function getData(loaderContext: webpack.loader.LoaderContext, data: string | any
  * Loads partials
  */
 function loadPartials(loaderContext: webpack.loader.LoaderContext, options: HandlebarsEntryLoaderOptions) {
-    // TODO: Deal with arrays of globs
-    glob.sync(options.partials).forEach(partial => {
 
-        // Resolve partial name & path
-        const partialName = options.partialNamer.call(loaderContext, partial);
-        const partialPath = path.resolve(partial);
+    // Handle partials as a glob string, or an array of globs
+    let partials: Array<string>;
+    if (typeof options.partials === 'string') {
+        partials = [options.partials];
+    } else {
+        partials = options.partials;
+    }
 
-        // Decorate partial with debugging info
-        const source = decoratePartial(fs.readFileSync(partialPath, 'utf-8'), partialName, partial, options);
+    partials.forEach(partialGlob => {
+        glob.sync(partialGlob).forEach(partial => {
 
-        // Add as a dependency so that Webpack updates on change
-        loaderContext.addDependency(partialPath);
+            // Resolve partial name & path
+            const partialName = options.partialNamer.call(loaderContext, partial);
+            const partialPath = path.resolve(partial);
 
-        // Register the partial
-        Handlebars.registerPartial(partialName, source);
+            // Decorate partial with debugging info
+            const source = decoratePartial(fs.readFileSync(partialPath, 'utf-8'), partialName, partial, options);
+
+            // Add as a dependency so that Webpack updates on change
+            loaderContext.addDependency(partialPath);
+
+            // Register the partial
+            Handlebars.registerPartial(partialName, source);
+        });
     });
 
 }
@@ -114,21 +130,32 @@ function loadPartials(loaderContext: webpack.loader.LoaderContext, options: Hand
  * Loads helpers
  */
 function loadHelpers(loaderContext: webpack.loader.LoaderContext, options: HandlebarsEntryLoaderOptions) {
-    // TODO: Deal with arrays of globs
-    glob.sync(options.helpers).forEach(helper => {
 
-        // Resolve helper name & path
-        const helperName = options.helperNamer.call(loaderContext, helper);
-        const helperPath = path.resolve(helper);
+    // Handle helpers as a glob string, or an array of globs
+    let helpers: Array<string>;
+    if (typeof options.helpers === 'string') {
+        helpers = [options.helpers];
+    } else {
+        helpers = options.helpers;
+    }
 
-        // Add as a dependency so that Webpack updates on change
-        loaderContext.addDependency(helperPath);
+    helpers.forEach(helperGlob => {
+        glob.sync(helperGlob).forEach(helper => {
 
-        // Remove from require cache
-        delete require.cache[require.resolve(helperPath)];
+            // Resolve helper name & path
+            const helperName = options.helperNamer.call(loaderContext, helper);
+            const helperPath = path.resolve(helper);
 
-        // Register the helper
-        Handlebars.registerHelper(helperName, require(helperPath).default);
+            // Add as a dependency so that Webpack updates on change
+            loaderContext.addDependency(helperPath);
+
+            // Remove from require cache
+            delete require.cache[require.resolve(helperPath)];
+
+            // Register the helper
+            Handlebars.registerHelper(helperName, require(helperPath).default);
+        });
+
     });
 }
 
@@ -159,7 +186,7 @@ function decoratePartial(source: string, partialName: string, partialSrc: string
  * @param {string} partial - the path to the partial
  */
 export function defaultPartialNamer(partial: string): string {
-    return partial;
+    return path.basename(partial, path.extname(partial));
 }
 
 /**
@@ -167,5 +194,34 @@ export function defaultPartialNamer(partial: string): string {
  * @param {string} helper - the path to the helper
  */
 export function defaultHelperNamer(helper: string): string {
-    return helper;
+    return path.basename(helper, path.extname(helper));
+}
+
+function preventJsOutputPlugin(resource: string, context: string) {
+
+    let entryName: string;
+    return (compilation: any, callback: Function) => {
+
+        for (let i in compilation.options.entry) {
+
+            // Check if entry point is an array
+            let entry = compilation.options.entry[i];
+            if (typeof entry !== 'string' && entry.pop) {
+                // Assume that the last entry is the one we want
+                entry = entry.pop();
+            }
+
+            if (typeof entry === 'string' && path.resolve(entry) === resource) {
+                entryName = i;
+                break;
+            }
+        }
+
+        if (entryName !== undefined) {
+            delete compilation.assets[entryName + '.js'];
+        }
+
+        callback();
+
+    }
 }

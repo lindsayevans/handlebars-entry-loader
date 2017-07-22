@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Goats are great! - My goat site</title>
+
+    {{!-- Use the 'includes/head' partial loaded from 'src/includes/head.hbs' --}}
+    {{> includes/head }}
+
+</head>
+<body>
+
+    {{!-- Use the 'partials/page-title' partial loaded from 'src/partials/page-title.hbs' --}}
+    {{> partials/page-title text="Goats are great!" }}
+
+    <h2>Goat GIFs</h2>
+    {{!-- Use the 'partials/image-list' partial loaded from 'src/partials/image-list.hbs' --}}
+    {{> partials/image-list images=goat_gifs }}
+
+    <h3>Data</h3>
+    {{!-- Use the 'jsonHelper' helper loaded from 'src/helpers/json.js' --}}
+    <pre>{{{ jsonHelper goat_gifs }}}</pre>
+
+    <h2>Goat memes</h2>
+    {{!-- Use the 'partials/image-list' partial loaded from 'src/partials/image-list.hbs' --}}
+    {{> partials/image-list images=goat_memes }}
+
+    <h3>Data</h3>
+    {{!-- Use the 'jsonHelper' helper loaded from 'src/helpers/json.js' --}}
+    <pre>{{{ jsonHelper goat_memes }}}</pre> 
+
+</body>
+</html>

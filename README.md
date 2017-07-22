@@ -1,4 +1,5 @@
 # Handlebars Entry Loader
+[![NPM version](https://img.shields.io/npm/v/handlebars-entry-loader.svg?maxAge=3600)](https://travis-ci.org/lindsayevans/handlebars-entry-loader) [![Build status](https://img.shields.io/travis/lindsayevans/handlebars-entry-loader.svg?maxAge=3600)](https://www.npmjs.com/package/handlebars-entry-loader) [![Dependency status](https://img.shields.io/david/lindsayevans/handlebars-entry-loader.svg?maxAge=3600)](https://david-dm.org/lindsayevans/handlebars-entry-loader) [![bitHound dependencies](https://img.shields.io/bithound/dependencies/github/lindsayevans/handlebars-entry-loader.svg?maxAge=3600)](https://www.bithound.io/github/lindsayevans/handlebars-entry-loader/master/dependencies/npm)
 
 Webpack loader to enable using Handlebars templates as entry points.
 
@@ -21,6 +22,9 @@ const ExtractHandlebars = new ExtractTextPlugin({
 });
 
 module.exports = {
+    entry: {
+        'index': 'src/templates/homepage.hbs'
+    },
     module: {
         loaders: [
             {
@@ -35,9 +39,9 @@ module.exports = {
                     {
                         loader: 'handlebars-entry-loader',
                         options: {
-                            partials: './src/components/**/*.hbs',
-                            helpers: './src/helpers/**/*.helper.js',
-                            data: './src/prototype/data.json'
+                            partials: 'src/partials/**/*.hbs',
+                            helpers: 'src/helpers/**/*.helper.js',
+                            data: 'src/data.json'
                         }
                     },
                 ])
@@ -47,19 +51,13 @@ module.exports = {
     plugins: [
         ExtractHandlebars
     ],
-    entry: {
-        'index': 'src/pages/homepage.hbs',
-        'pages/about': 'src/pages/about.hbs',
-        'pages/admin/login': 'src/pages/admin/login.hbs',
-        'prototype/index': 'src/prototype/index.hbs',
-    }
     output: {
-        path: path.join(__dirname, '../dist')
+        path: 'dist/'
     }
 }
 ```
 
-See [examples](./examples/) for more complex configurations.
+See [`src/examples`](./src/examples/) for more complex configurations.
 
 ## Options
 
@@ -72,37 +70,36 @@ Data to pass to the handlebars template.
 Can either be a JavaScript Object `{foo: 'bar'}` or a path to a JSON file to load.
 
 ### Partials
-```javascript
-partials: null
-```
 
 File glob to load Handlebars Partials from.
+
+Defaults to `null` (won't load any partials)
+
+Example:
+
+`config:`
 ```javascript
 partials: 'src/partials/**/*.hbs'
 ```
 
-`src/partials/foo/bar.hbs`
+`src/partials/foo/bar.hbs:`
 ```handlebars
 <p>Hello {{name}}, I am foo/bar</p>
 ```
 
-`something.hbs`
+`something.hbs:`
 ```handlebars
 {{> src/partials/foo/bar.hbs name="Something" }}
 ```
 
 ### Partial namer
 
-```javascript
-partialNamer: partial => partial
-```
-
-By default partials will be use their full filename as the partial name, this may be undesirable (.hbs extension, ./src/ directory, etc.)
+By default partials will use the file name minus extension as the partial name, this may be undesirable (e.g. multiple partials with the same name in different directories)
 
 To override this behaviour, provide a `partialNamer` function:
 ```javascript
-partialNamer: partial => {
-    return partial.replace('./src/partials/', '').replace('.hbs', '');
+partialNamer: function(partial) {
+    return partial.replace('src/partials/', '').replace('.hbs', '');
 }
 ```
 
@@ -113,19 +110,67 @@ partialNamer: partial => {
 
 
 ### Helpers
-TODO
+
+
+File glob to load Handlebars Partials from.
+
+Defaults to `null` (won't load any partials)
+
+Example:
+
+`config:`
+```javascript
+helpers: 'src/helpers/**/*.helper.js'
+```
+
+`src/helpers/json.helper.js:`
+```javascript
+exports.default = function(data) {
+    return JSON.stringify(data, null, ' ');
+};
+```
+
+`something.hbs:`
+```handlebars
+<pre>{{src/helpers/json.helper.js someJSObject}}</pre>
+```
+
 
 ### Helper namer
-TODO
+
+```javascript
+helperNamer: helper => helper
+```
+
+By default helpers will use the file name minus extension as the helper name, this may be undesirable (e.g. multiple helpers with the same name in different directories)
+
+To override this behaviour, provide a `helperNamer` function:
+```javascript
+helperNamer: function(helper) {
+    return helper.replace('src/helpers/', '').replace('.js', '');
+}
+```
+
+`something.hbs`
+```handlebars
+<pre>{{json someJSObject}}</pre>
+```
+
 
 ### Debug
-```javascript
-debug: false
-```
 
 Set to `true` to wrap Handlebars templates & partials with HTML comments containing debugging information (name, path, data, etc.)
 
 Useful to enable based on NODE_ENV:
 ```javascript
 debug: process.env.NODE_ENV !== 'production'
+```
+
+### Prevent JS output
+
+By default we prevent Webpack from emitting a `.js` file with each Handlebars entry point.
+
+If this is causing issues with other loaders, you can turn it off:
+```javascript
+preventJsOutput: false
 ```
