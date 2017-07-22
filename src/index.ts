@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
-import * as ObjectAssign from 'object-assign';
 import * as webpack from 'webpack';
 import * as LoaderUtils from 'loader-utils';
 import * as Handlebars from 'handlebars';
@@ -32,7 +31,7 @@ export class HandlebarsEntryLoaderOptions {
 export default function HandlebarsEntryLoader(this: webpack.loader.LoaderContext, source: string): string {
 
     // Merge options with defaults
-    const options = ObjectAssign(defaultOptions, LoaderUtils.getOptions(this));
+    const options = { ...defaultOptions, ...LoaderUtils.getOptions(this) };
 
     // Get data
     const data = getData(this, options.data);
