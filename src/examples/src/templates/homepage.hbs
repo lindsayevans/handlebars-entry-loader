@@ -2,13 +2,23 @@
 <html lang="en">
 <head>
     <title>My goat site</title>
+
+    {{!-- Use the 'includes/head' partial loaded from 'src/includes/head.hbs' --}}
+    {{> includes/head }}
+
 </head>
 <body>
 
-    {{!-- Use the 'page-title' partial loaded from 'src/partials/page-title.hbs' --}}
-    {{> page-title text="Homepage" }}
+    {{!-- Use the 'partials/page-title' partial loaded from 'src/partials/page-title.hbs' --}}
+    {{> partials/page-title text="Homepage" }}
 
     <a href="goats/are/great.html">Goat memes</a>
+
+    {{!-- Use the 'helloHelper' helper loaded from 'src/other-helpers/hello.js' --}}
+    <p>{{ helloHelper 'World' }}</p>
+
+    {{!-- Use the 'echoHelper' helper loaded from 'src/other-helpers/echo.js' --}}
+    <p>{{ echoHelper 'World' }}</p>
 
 </body>
 </html>

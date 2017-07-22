@@ -45,25 +45,39 @@ module.exports = {
                             // Output debugging comments in HTML
                             debug: true,
 
-                            // Load all of the .hbs files in `src/partials` directory & subdirectories as partials
-                            partials: 'src/partials/**/*.hbs',
+                            // Partials can be specified as a glob string:
+                            // partials: 'src/partials/**/*.hbs',
+                            // or as an array of glob strings:
+                            partials: [
+                                'src/partials/**/*.hbs',
+                                'src/includes/*.hbs'
+                            ],
 
-                            // A partial loaded from `src/partials/foo.hbs` will be named `foo`
-                            // A partial loaded from `src/partials/foo/bar.hbs` will be named `foo/bar`
+                            // Default partial naming is the basename of the file, minus extension
+                            // you can use a custom namer to make it something more usable:
                             partialNamer: function(partial) {
+                                // A partial loaded from `src/partials/foo.hbs` will be named `partials/foo`
                                 return partial
-                                    .replace('src/partials/', '')
+                                    .replace('src/', '')
                                     .replace('.hbs', '');
                             },
 
-                            // Load all of the .js files in `src/helpers` directory as helpers
-                            helpers: 'src/helpers/*.js',
+                            // Helpers can be specified as a glob string:
+                            // helpers: 'src/helpers/**/*.js',
+                            // or as an array of glob strings:
+                            helpers: [
+                                'src/helpers/**/*.js',
+                                'src/other-helpers/*.js'
+                            ],
 
-                            // A partial loaded from `src/helpers/foo.js` will be named `foo`
+                            // Default helper naming is the basename of the file, minus extension
+                            // you can use a custom namer to make it something more usable:
                             helperNamer: function(helper) {
+                                // A partial loaded from `src/helpers/foo.js` will be named `fooHelper`
                                 return helper
                                     .replace('src/helpers/', '')
-                                    .replace('.js', '');
+                                    .replace('src/other-helpers/', '')
+                                    .replace('.js', '') + 'Helper';
                             },
 
                             // Load the JSON file in `src/data/goats.json`

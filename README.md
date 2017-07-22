@@ -94,7 +94,7 @@ partials: 'src/partials/**/*.hbs'
 
 ### Partial namer
 
-By default partials will be use their full filename as the partial name, this may be undesirable (.hbs extension, ./src/ directory, etc.)
+By default partials will use the file name minus extension as the partial name, this may be undesirable (e.g. multiple partials with the same name in different directories)
 
 To override this behaviour, provide a `partialNamer` function:
 ```javascript
@@ -142,7 +142,7 @@ exports.default = function(data) {
 helperNamer: helper => helper
 ```
 
-By default helpers will be use their full filename as the helper name, this may be undesirable (.js extension, ./src/ directory, etc.)
+By default helpers will use the file name minus extension as the helper name, this may be undesirable (e.g. multiple helpers with the same name in different directories)
 
 To override this behaviour, provide a `helperNamer` function:
 ```javascript
@@ -164,4 +164,13 @@ Set to `true` to wrap Handlebars templates & partials with HTML comments contain
 Useful to enable based on NODE_ENV:
 ```javascript
 debug: process.env.NODE_ENV !== 'production'
+```
+
+### Prevent JS output
+
+By default we prevent Webpack from emitting a `.js` file with each Handlebars entry point.
+
+If this is causing issues with other loaders, you can turn it off:
+```javascript
+preventJsOutput: false
 ```

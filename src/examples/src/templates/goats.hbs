@@ -2,27 +2,31 @@
 <html lang="en">
 <head>
     <title>Goats are great! - My goat site</title>
+
+    {{!-- Use the 'includes/head' partial loaded from 'src/includes/head.hbs' --}}
+    {{> includes/head }}
+
 </head>
 <body>
 
-    {{!-- Use the 'page-title' partial loaded from 'src/partials/page-title.hbs' --}}
-    {{> page-title text="Goats are great!" }}
+    {{!-- Use the 'partials/page-title' partial loaded from 'src/partials/page-title.hbs' --}}
+    {{> partials/page-title text="Goats are great!" }}
 
     <h2>Goat GIFs</h2>
-    {{!-- Use the 'image-list' partial loaded from 'src/partials/image-list.hbs' --}}
-    {{> image-list images=goat_gifs }}
+    {{!-- Use the 'partials/image-list' partial loaded from 'src/partials/image-list.hbs' --}}
+    {{> partials/image-list images=goat_gifs }}
 
     <h3>Data</h3>
-    {{!-- Use the 'json' helper loaded from 'src/helpers/json.js' --}}
-    <pre>{{{ json goat_gifs }}}</pre>
+    {{!-- Use the 'jsonHelper' helper loaded from 'src/helpers/json.js' --}}
+    <pre>{{{ jsonHelper goat_gifs }}}</pre>
 
     <h2>Goat memes</h2>
-    {{!-- Use the 'image-list' partial loaded from 'src/partials/image-list.hbs' --}}
-    {{> image-list images=goat_memes }}
+    {{!-- Use the 'partials/image-list' partial loaded from 'src/partials/image-list.hbs' --}}
+    {{> partials/image-list images=goat_memes }}
 
     <h3>Data</h3>
-    {{!-- Use the 'json' helper loaded from 'src/helpers/json.js' --}}
-     <pre>{{{ json goat_memes }}}</pre> 
+    {{!-- Use the 'jsonHelper' helper loaded from 'src/helpers/json.js' --}}
+    <pre>{{{ jsonHelper goat_memes }}}</pre> 
 
 </body>
 </html>
