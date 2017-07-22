@@ -203,7 +203,15 @@ function preventJsOutputPlugin(resource: string, context: string) {
     return (compilation: any, callback: Function) => {
 
         for (let i in compilation.options.entry) {
-            if (path.resolve(compilation.options.entry[i]) === resource) {
+
+            // Check if entry point is an array
+            let entry = compilation.options.entry[i];
+            if (typeof entry !== 'string' && entry.pop) {
+                // Assume that the last entry is the one we want
+                entry = entry.pop();
+            }
+
+            if (typeof entry === 'string' && path.resolve(entry) === resource) {
                 entryName = i;
                 break;
             }
