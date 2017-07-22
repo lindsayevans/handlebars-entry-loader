@@ -14,11 +14,11 @@ export class HandlebarsEntryLoaderOptions {
     /** Data to pass to the template */
     data: any | string = {};
     /** A file glob of partials to load */
-    partials: string;
+    partials: string | Array<string>;
     /** A function that returns a name for the partial */
     partialNamer = defaultPartialNamer;
     /** A file glob of helpers to load */
-    helpers: string;
+    helpers: string | Array<string>;
     /** A function that returns a name for the helper */
     helperNamer = defaultHelperNamer
 };
@@ -90,21 +90,31 @@ function getData(loaderContext: webpack.loader.LoaderContext, data: string | any
  * Loads partials
  */
 function loadPartials(loaderContext: webpack.loader.LoaderContext, options: HandlebarsEntryLoaderOptions) {
-    // TODO: Deal with arrays of globs
-    glob.sync(options.partials).forEach(partial => {
 
-        // Resolve partial name & path
-        const partialName = options.partialNamer.call(loaderContext, partial);
-        const partialPath = path.resolve(partial);
+    // Handle partials as a glob string, or an array of globs
+    let partials: Array<string>;
+    if (typeof options.partials === 'string') {
+        partials = [options.partials];
+    } else {
+        partials = options.partials;
+    }
 
-        // Decorate partial with debugging info
-        const source = decoratePartial(fs.readFileSync(partialPath, 'utf-8'), partialName, partial, options);
+    partials.forEach(partialGlob => {
+        glob.sync(partialGlob).forEach(partial => {
 
-        // Add as a dependency so that Webpack updates on change
-        loaderContext.addDependency(partialPath);
+            // Resolve partial name & path
+            const partialName = options.partialNamer.call(loaderContext, partial);
+            const partialPath = path.resolve(partial);
 
-        // Register the partial
-        Handlebars.registerPartial(partialName, source);
+            // Decorate partial with debugging info
+            const source = decoratePartial(fs.readFileSync(partialPath, 'utf-8'), partialName, partial, options);
+
+            // Add as a dependency so that Webpack updates on change
+            loaderContext.addDependency(partialPath);
+
+            // Register the partial
+            Handlebars.registerPartial(partialName, source);
+        });
     });
 
 }
@@ -113,21 +123,32 @@ function loadPartials(loaderContext: webpack.loader.LoaderContext, options: Hand
  * Loads helpers
  */
 function loadHelpers(loaderContext: webpack.loader.LoaderContext, options: HandlebarsEntryLoaderOptions) {
-    // TODO: Deal with arrays of globs
-    glob.sync(options.helpers).forEach(helper => {
 
-        // Resolve helper name & path
-        const helperName = options.helperNamer.call(loaderContext, helper);
-        const helperPath = path.resolve(helper);
+    // Handle helpers as a glob string, or an array of globs
+    let helpers: Array<string>;
+    if (typeof options.helpers === 'string') {
+        helpers = [options.helpers];
+    } else {
+        helpers = options.helpers;
+    }
 
-        // Add as a dependency so that Webpack updates on change
-        loaderContext.addDependency(helperPath);
+    helpers.forEach(helperGlob => {
+        glob.sync(helperGlob).forEach(helper => {
 
-        // Remove from require cache
-        delete require.cache[require.resolve(helperPath)];
+            // Resolve helper name & path
+            const helperName = options.helperNamer.call(loaderContext, helper);
+            const helperPath = path.resolve(helper);
 
-        // Register the helper
-        Handlebars.registerHelper(helperName, require(helperPath).default);
+            // Add as a dependency so that Webpack updates on change
+            loaderContext.addDependency(helperPath);
+
+            // Remove from require cache
+            delete require.cache[require.resolve(helperPath)];
+
+            // Register the helper
+            Handlebars.registerHelper(helperName, require(helperPath).default);
+        });
+
     });
 }
 
