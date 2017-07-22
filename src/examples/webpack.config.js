@@ -53,7 +53,7 @@ module.exports = {
                                 'src/includes/*.hbs'
                             ],
 
-                            // Default partial naming is the path to the partial
+                            // Default partial naming is the basename of the file, minus extension
                             // you can use a custom namer to make it something more usable:
                             partialNamer: function(partial) {
                                 // A partial loaded from `src/partials/foo.hbs` will be named `partials/foo`
@@ -70,12 +70,14 @@ module.exports = {
                                 'src/other-helpers/*.js'
                             ],
 
-                            // A partial loaded from `src/helpers/foo.js` will be named `foo`
+                            // Default helper naming is the basename of the file, minus extension
+                            // you can use a custom namer to make it something more usable:
                             helperNamer: function(helper) {
+                                // A partial loaded from `src/helpers/foo.js` will be named `fooHelper`
                                 return helper
                                     .replace('src/helpers/', '')
                                     .replace('src/other-helpers/', '')
-                                    .replace('.js', '');
+                                    .replace('.js', '') + 'Helper';
                             },
 
                             // Load the JSON file in `src/data/goats.json`

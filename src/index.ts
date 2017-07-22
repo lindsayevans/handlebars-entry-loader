@@ -179,7 +179,7 @@ function decoratePartial(source: string, partialName: string, partialSrc: string
  * @param {string} partial - the path to the partial
  */
 export function defaultPartialNamer(partial: string): string {
-    return partial;
+    return path.basename(partial, path.extname(partial));
 }
 
 /**
@@ -187,5 +187,5 @@ export function defaultPartialNamer(partial: string): string {
  * @param {string} helper - the path to the helper
  */
 export function defaultHelperNamer(helper: string): string {
-    return helper;
+    return path.basename(helper, path.extname(helper));
 }
