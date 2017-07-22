@@ -9,6 +9,7 @@ Includes support for:
 * Data
 * Partials
 * Helpers
+* Decorators
 
 ## Usage
 
@@ -156,6 +157,13 @@ helperNamer: function(helper) {
 <pre>{{json someJSObject}}</pre>
 ```
 
+### Decorators
+
+Decorators follow the same config rules as helpers, using the following options:
+```javascript
+decorators: 'src/decorators/**/*.js',
+helperNamer: function() {...}
+```
 
 ### Debug
 

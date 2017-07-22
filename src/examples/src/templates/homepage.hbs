@@ -20,5 +20,10 @@
     {{!-- Use the 'echoHelper' helper loaded from 'src/other-helpers/echo.js' --}}
     <p>{{ echoHelper 'World' }}</p>
 
+    {{!-- Use the `i18n` decorator to set the language --}}
+    {{* i18n 'en-au' }}
+    {{!-- Now you can use any helpers it exposes --}}
+    <p>{{ helloTranslatedHelper 'goats' }}</p>
+
 </body>
 </html>

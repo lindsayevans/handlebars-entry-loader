@@ -21,6 +21,10 @@ export class HandlebarsEntryLoaderOptions {
     helpers: string | Array<string>;
     /** A function that returns a name for the helper */
     helperNamer = defaultHelperNamer
+    /** A file glob of decorators to load */
+    decorators: string | Array<string>;
+    /** A function that returns a name for the decorator */
+    decoratorNamer = defaultHelperNamer
     /** Prevent Webpack from outputting .js files */
     preventJsOutput = true;
 };
@@ -28,7 +32,7 @@ export class HandlebarsEntryLoaderOptions {
 /**
  * Webpack loader for Handlebars templates used as entry points
  * 
- * Includes support for data, partials & helpers
+ * Includes support for data, partials, helpers & decorators
  */
 export default function HandlebarsEntryLoader(this: webpack.loader.LoaderContext, source: string): string {
 
@@ -46,6 +50,11 @@ export default function HandlebarsEntryLoader(this: webpack.loader.LoaderContext
     // Load helpers
     if (options.helpers) {
         loadHelpers(this, options);
+    }
+
+    // Load decorators
+    if (options.decorators) {
+        loadDecorators(this, options);
     }
 
     // Prevent JS output
@@ -152,6 +161,39 @@ function loadHelpers(loaderContext: webpack.loader.LoaderContext, options: Handl
 
             // Register the helper
             Handlebars.registerHelper(helperName, require(helperPath).default);
+        });
+
+    });
+}
+
+/**
+ * Loads decorators
+ */
+function loadDecorators(loaderContext: webpack.loader.LoaderContext, options: HandlebarsEntryLoaderOptions) {
+
+    // Handle decorators as a glob string, or an array of globs
+    let decorators: Array<string>;
+    if (typeof options.decorators === 'string') {
+        decorators = [options.decorators];
+    } else {
+        decorators = options.decorators;
+    }
+
+    decorators.forEach(decoratorGlob => {
+        glob.sync(decoratorGlob).forEach(decorator => {
+
+            // Resolve decorator name & path
+            const decoratorName = options.decoratorNamer.call(loaderContext, decorator);
+            const decoratorPath = path.resolve(decorator);
+
+            // Add as a dependency so that Webpack updates on change
+            loaderContext.addDependency(decoratorPath);
+
+            // Remove from require cache
+            delete require.cache[require.resolve(decoratorPath)];
+
+            // Register the decorator
+            Handlebars.registerDecorator(decoratorName, require(decoratorPath).default);
         });
 
     });
