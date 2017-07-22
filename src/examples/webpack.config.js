@@ -80,6 +80,9 @@ module.exports = {
                                     .replace('.js', '') + 'Helper';
                             },
 
+                            // Decorator options follow the sae rules as helpers
+                            decorators: 'src/decorators/**/*.js',
+
                             // Load the JSON file in `src/data/goats.json`
                             // Will be passed as a JS object to the Handlebars compiler
                             data: 'src/data/goats.json'
