@@ -12,7 +12,7 @@ export class HandlebarsEntryLoaderOptions {
     /** Output debugging information to rendered HTML */
     debug = false;
     /** Data to pass to the template */
-    data: any | string = {};
+    data: string | Array<string>;
     /** A file glob of partials to load */
     partials: string | Array<string>;
     /** A function that returns a name for the partial */
@@ -31,7 +31,7 @@ export class HandlebarsEntryLoaderOptions {
 
 /**
  * Webpack loader for Handlebars templates used as entry points
- * 
+ *
  * Includes support for data, partials, helpers & decorators
  */
 export default function HandlebarsEntryLoader(this: webpack.loader.LoaderContext, source: string): string {
@@ -81,21 +81,32 @@ const defaultOptions = new HandlebarsEntryLoaderOptions();
  */
 function getData(loaderContext: webpack.loader.LoaderContext, data: string | any): any {
 
-    // If data is a file path, load it as a dependency
+    // Handle data as a glob string, or an array of globs
+    let dataPartials: Array<string>;
     if (typeof data === 'string') {
-
-        // Resolve path to data file
-        const dataFile = path.resolve(data);
-
-        // Remove from require cache
-        delete require.cache[dataFile];
-
-        // Add as a dependency so that Webpack updates on change
-        loaderContext.addDependency(dataFile);
-
-        // Import data
-        data = require(dataFile);
+        dataPartials = [data];
     }
+    else {
+        dataPartials = data;
+    }
+
+    dataPartials.forEach(function (dataGlob) {
+        glob.sync(dataGlob).forEach(function (dataPartial) {
+
+            // Resolve path to data file
+            const dataFile = path.resolve(dataPartial);
+
+            // Remove from require cache
+            delete require.cache[dataFile];
+
+            // Add as a dependency so that Webpack updates on change
+            loaderContext.addDependency(dataFile);
+
+            // Import and merging data with Object.assign
+            data = Object.assign({}, data, require(dataFile));
+
+        });
+    });
 
     return data;
 }
@@ -200,7 +211,7 @@ function loadDecorators(loaderContext: webpack.loader.LoaderContext, options: Ha
 }
 
 /**
- * Wraps Handlebars template source with debugging information if enabled 
+ * Wraps Handlebars template source with debugging information if enabled
  */
 function decorateTemplate(source: string, resource: string, data: any, options: HandlebarsEntryLoaderOptions): string {
     const prefix = options.debug ? `<!-- handlebars-entry-loader:template
@@ -212,7 +223,7 @@ function decorateTemplate(source: string, resource: string, data: any, options: 
 }
 
 /**
- * Wraps Handlebars partial source with debugging information if enabled 
+ * Wraps Handlebars partial source with debugging information if enabled
  */
 function decoratePartial(source: string, partialName: string, partialSrc: string, options: HandlebarsEntryLoaderOptions): string {
     const prefix = options.debug ? `<!-- handlebars-entry-loader:partial name="${partialName}" src="${partialSrc}" -->\n` : '';
